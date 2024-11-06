@@ -1,47 +1,23 @@
 package main
 
-import "log"
-
-var (
-	articles   []string
-	courseList = make(map[string]int)
-)
-
 func main() {
-	displayCourse()
-	addArticle("pomme")
-	addArticle("pomme")
-	delArticle("pomme")
-	addArticle("poire")
-	displayCourse()
-}
-
-func delArticle(article string) {
-	for i, art := range articles {
-		if art == article {
-			//articles[:index] : prend tous les éléments avant l'index que l'on veut supprimer
-			//articles[index+1:] : prend tous les éléments après l'index que l'on veut supprimer.
-			articles = append(articles[:i], articles[(i+1):]...)
-		}
+	t := Task{
+		Title:       "Dormir",
+		Description: "C'est bien de dormir",
+		Completed:   false,
 	}
-	delete(courseList, article)
-}
+	// Notre map de task stocke des pointers de task
+	// Il faut donc utiliser &t
+	tasks[t.Title] = &t
+	//log.Printf("Notre tâche : %#v", t)
+	//t.Display()
 
-func addArticle(article string) {
-	found := false
-	for _, i := range articles {
-		if i == article {
-			found = true
-			break
-		}
-	}
-	if !found {
-		articles = append(articles, article)
-	}
-	courseList[article] = courseList[article] + 1
-}
+	//displayAllTasks()
 
-func displayCourse() {
-	log.Printf("%#v", articles)
-	log.Printf("%#v", courseList)
+	//addTask()
+	//t.Display()
+	t.Done()
+	//t.Display()
+	displayAllTasks()
+
 }
