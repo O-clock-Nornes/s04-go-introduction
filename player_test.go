@@ -27,5 +27,7 @@ func TestDisplay(t *testing.T) {
 }
 func TestLoad(t *testing.T) {
 	p := playerLoad("toto")
+	p.save()
+	p.del()
 	log.Printf("%v", p)
 }
