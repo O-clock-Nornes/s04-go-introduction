@@ -16,6 +16,7 @@ var (
 type Player struct {
 	Name                    string //PrimaryID // not nullable
 	Username                string
+	State                   string
 	Years                   int
 	Health                  int
 	PrimaryAbilityRessource int
@@ -33,7 +34,8 @@ func loadFromFile(name string) (*Player, error) {
 	}
 	content, err := io.ReadAll(file)
 	if err != nil {
-		log.Fatalf("Error when reading in file : %v", err)
+		log.Printf("Error when reading in file : %v", err)
+		return &Player{}, err
 	}
 	var p Player
 	err = yaml.Unmarshal([]byte(content), &p)
@@ -52,10 +54,13 @@ func playerLoad(name string) *Player {
 		var p *Player
 		p, err := loadFromFile(name)
 		if err != nil {
+			// Ici on crée un nouvel utilisateur vierge
 			p = &Player{
 				Name:   name,
 				Health: 10,
+				State:  "needPseudo",
 			}
+			p.save()
 		}
 		Players[name] = p
 		return p

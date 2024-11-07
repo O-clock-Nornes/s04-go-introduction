@@ -63,7 +63,8 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 	if m.Author.ID == s.State.User.ID {
 		return
 	}
-	log.Printf("Message reçu : %v", m.Content)
+	log.Printf("Message reçu : %v de la part de %v", m.Content, m.Author.Username)
+
 	switch m.Content {
 	case "ping":
 		s.ChannelMessageSend(m.ChannelID, "pong")
@@ -74,5 +75,28 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		}
 	default:
 		log.Printf("message inconnu : %v", m.Content)
+	}
+	p := playerLoad(m.Author.Username)
+	switch p.State {
+	case "needPseudo":
+		s.ChannelMessageSend(m.ChannelID, "Renseigne ton pseudo")
+		p.State = "waitPseudo"
+	case "waitPseudo":
+		p.Username = m.Content
+		s.ChannelMessageSend(m.ChannelID, fmt.Sprintf("Est tu certain de vouloir %v comme pseudo ?", m.Content))
+		p.State = "confirmPseudo"
+	case "confirmPseudo":
+		switch m.Content {
+		case "y", "o", "Y", "O":
+			p.State = "active"
+		default:
+			p.State = "waitPseudo"
+			s.ChannelMessageSend(m.ChannelID, "Du coup resaisie ton pseudo")
+			// p.msg("coucou")
+		}
+		p.save()
+	case "active":
+		// Maintenant j'implémente mon jeux
+
 	}
 }
