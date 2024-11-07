@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"io"
 	"log"
 	"os"
 
@@ -18,6 +19,47 @@ type Player struct {
 	Years                   int
 	Health                  int
 	PrimaryAbilityRessource int
+}
+
+func loadFromFile(name string) (*Player, error) {
+	NameofFile := name
+	NameofFileWithExt := fmt.Sprintf("%s.yml", NameofFile)
+
+	file, err := os.Open(NameofFileWithExt)
+	if os.IsNotExist(err) {
+		fmt.Printf("File %s not found, creating and saving player.\n", NameofFileWithExt)
+	} else if err != nil {
+		log.Fatalf("Error when opening file: %v", err)
+	}
+	content, err := io.ReadAll(file)
+	if err != nil {
+		log.Fatalf("Error when reading in file : %v", err)
+	}
+	var p Player
+	err = yaml.Unmarshal([]byte(content), &p)
+	if err != nil {
+		log.Fatalf("error when unmarshal: %v", err)
+	}
+
+	Players[p.Name] = &p
+	return &p, nil
+}
+func playerLoad(name string) *Player {
+	p, exists := Players[name]
+	if exists {
+		return p
+	} else {
+		var p *Player
+		p, err := loadFromFile(name)
+		if err != nil {
+			p = &Player{
+				Name:   name,
+				Health: 10,
+			}
+		}
+		Players[name] = p
+		return p
+	}
 }
 
 func (p Player) display() string {
