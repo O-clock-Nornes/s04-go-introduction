@@ -97,6 +97,5 @@ func messageCreate(s *discordgo.Session, m *discordgo.MessageCreate) {
 		p.save()
 	case "active":
 		// Maintenant j'implémente mon jeux
-
 	}
 }

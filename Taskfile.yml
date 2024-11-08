@@ -3,7 +3,10 @@ version: '3'
 tasks:
   default:
     cmds:
+      - task: build
       - task: deploy
+      - task: stop
+      - task: run
   build:
     cmds:
       - CGO_ENABLED=0 go build -o bin/task
@@ -12,3 +15,9 @@ tasks:
     cmds:
       - scp bin/task student@profy12-server.eddi.cloud:/home/student/
       - ssh student@profy12-server.eddi.cloud "chmod u+x task"
+  stop:
+    cmds:
+      - ssh student@profy12-server.eddi.cloud "pkill -f task"
+  run:
+    cmds:
+      - ssh student@profy12-server.eddi.cloud "nohup task"
